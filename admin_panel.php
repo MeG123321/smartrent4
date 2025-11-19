@@ -33,7 +33,7 @@ $recent = admin_get_recent($pdo);
       <h3>Oferty</h3>
       <p style="font-size:1.6rem;font-weight:700"><?=intval($stats['properties'])?></p>
       <p class="muted">Aktywne oferty</p>
-      <p><a class="btn" href="property_list.php">Przeglądaj</a></p>
+      <p><a class="btn" href="admin_browse_properties.php">Zarządzaj</a></p>
     </div>
     <div class="panel">
       <h3>Wynajmy</h3>
@@ -74,17 +74,6 @@ $recent = admin_get_recent($pdo);
     </section>
 
     <aside>
-      <div class="panel">
-        <h4>Pomoc / Dokumentacja</h4>
-        <p class="muted">Krótka pomoc administracyjna:</p>
-        <ul class="muted">
-          <li>Zarządzaj ofertami i użytkownikami przez odpowiednie sekcje.</li>
-          <li>Raporty: wybierz zakres dat, pobierz CSV z zestawieniami.</li>
-          <li>Logi: sprawdź ostatnie działania i błędy.</li>
-        </ul>
-        <p><a class="btn" href="admin_help.php">Szczegóły pomocy</a></p>
-      </div>
-
       <div class="panel" style="margin-top:12px">
         <h4>Zgłoszenia support</h4>
         <?php
