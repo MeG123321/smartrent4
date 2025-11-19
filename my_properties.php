@@ -21,6 +21,17 @@ $stmt = $pdo->prepare("
 $stmt->execute(['uid' => $user_id]);
 $properties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Policz nieruchomości według statusu
+$available_count = 0;
+$rented_count = 0;
+foreach ($properties as $p) {
+    if ($p['is_rented'] == 1) {
+        $rented_count++;
+    } else {
+        $available_count++;
+    }
+}
+
 // Helper do formatowania ceny
 if (!function_exists('format_price')) {
     function format_price($amount): string {
@@ -45,6 +56,15 @@ if (!function_exists('format_price')) {
 <?php include 'includes/navbar.php'; ?>
 <main class="container">
   <h2>Moje mieszkania</h2>
+  
+  <?php if (!empty($properties)): ?>
+    <div class="panel" style="margin-bottom:12px; padding:12px;">
+      <strong>Podsumowanie:</strong>
+      <span class="badge status-available" style="margin-left:8px">Dostępne: <?= $available_count ?></span>
+      <span class="badge status-rented" style="margin-left:8px">Wynajęte: <?= $rented_count ?></span>
+      <span style="margin-left:8px">Łącznie: <?= count($properties) ?></span>
+    </div>
+  <?php endif; ?>
   
   <div style="margin-bottom:12px">
     <a class="btn" href="add_property.php">Dodaj nowe mieszkanie</a>

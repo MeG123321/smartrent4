@@ -3,18 +3,52 @@ require_once 'includes/config.php';
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
 session_start();
-require_role('admin');
+
+// Require login
+require_login();
 
 $id = intval($_GET['id'] ?? 0);
 if (!$id) {
-    header('Location: admin_panel.php');
+    header('Location: my_properties.php');
     exit;
 }
+
+// Get property details
 $stmt = $pdo->prepare("SELECT * FROM properties WHERE id = :id LIMIT 1");
 $stmt->execute(['id'=>$id]);
 $prop = $stmt->fetch(PDO::FETCH_ASSOC);
+
 if (!$prop) {
-    header('Location: admin_panel.php');
+    header('Location: my_properties.php');
+    exit;
+}
+
+// Check permission: owner or admin
+$is_admin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+$is_owner = isset($_SESSION['user_id']) && $_SESSION['user_id'] == $prop['owner_id'];
+
+if (!$is_admin && !$is_owner) {
+    // Access denied
+    http_response_code(403);
+    ?>
+    <!doctype html>
+    <html lang="pl">
+    <head>
+      <meta charset="utf-8">
+      <title>Brak dostępu — smartrent</title>
+      <link rel="stylesheet" href="assets/css/style.css">
+    </head>
+    <body>
+    <?php include 'includes/navbar.php'; ?>
+    <main class="container narrow">
+      <h2>Brak dostępu</h2>
+      <div class="alert alert-danger">Nie masz uprawnień do edycji tej nieruchomości.</div>
+      <p><a class="btn" href="my_properties.php">Powrót do moich nieruchomości</a></p>
+    </main>
+    <?php include 'includes/footer.php'; ?>
+    </body>
+    </html>
+    <?php
     exit;
 }
 
@@ -45,10 +79,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare("UPDATE properties SET title=:t,description=:d,price=:p,city=:c,image=:i WHERE id=:id");
             $stmt->execute(['t'=>$title,'d'=>$desc,'p'=>$price,'c'=>$city,'i'=>$imageName,'id'=>$id]);
 
-            require_once 'includes/admin_functions.php';
-            admin_log_activity($pdo, $_SESSION['user_id'] ?? null, 'Edytowano ofertę', "property_id:{$id}, title: " . $title);
+            // Log activity if admin functions exist
+            if (function_exists('admin_log_activity')) {
+                admin_log_activity($pdo, $_SESSION['user_id'] ?? null, 'Edytowano ofertę', "property_id:{$id}, title: " . $title);
+            }
 
-            header('Location: admin_panel.php');
+            // Redirect based on role
+            if ($is_admin) {
+                header('Location: admin_browse_properties.php');
+            } else {
+                header('Location: my_properties.php');
+            }
             exit;
         }
     }
@@ -87,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </label>
     <div class="form-actions">
       <button class="btn btn-primary" type="submit">Zapisz</button>
-      <a class="btn" href="admin_panel.php">Anuluj</a>
+      <a class="btn" href="<?= $is_admin ? 'admin_browse_properties.php' : 'my_properties.php' ?>">Anuluj</a>
     </div>
   </form>
 </main>
