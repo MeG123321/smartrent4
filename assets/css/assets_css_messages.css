@@ -1,0 +1,108 @@
+/* messages.css - wymuszone rozmiary miniaturek i lewy panel (priorytetowe reguły) */
+
+/* Layout główny */
+.messages-wrap {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+/* Lista konwersacji (lewy panel) - zredukowana szerokość i wymuszona */
+.conversations {
+  width: 240px !important; /* zmniejszona szerokość */
+  max-width: 240px !important;
+  max-height: 75vh;
+  overflow: auto;
+  border: 1px solid rgba(255,255,255,0.03);
+  padding: 10px;
+  background: var(--card);
+  color: var(--text);
+  border-radius: 12px;
+  flex: 0 0 240px !important;
+}
+
+/* pojedyńcza konwersacja - miniature + treść */
+.conv-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .12s ease;
+}
+.conv-item:hover { background: rgba(255,255,255,0.02); }
+.conv-active { background: linear-gradient(90deg, rgba(96,165,250,0.06), rgba(110,231,183,0.03)); }
+
+/* miniatura - wymuszone rozmiary, mniejsze niż poprzednio */
+.conv-thumb {
+  width: 56px !important;   /* szerokość miniaturki */
+  height: 40px !important;  /* wysokość miniaturki */
+  flex: 0 0 56px !important;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* wymuszone dopasowanie obrazka w miniaturce */
+.conv-thumb img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+/* zapasowy placeholder */
+.thumb-placeholder {
+  width:100%;
+  height:100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
+}
+
+/* content konwersacji */
+.conv-body { flex: 1 1 auto; min-width:0; }
+.conv-title { display:block; font-weight:700; color:var(--text); }
+.conv-meta { font-size:0.85rem; color:var(--muted); margin-top:4px; }
+.snippet { margin-top:6px; color:var(--muted); font-size:0.9rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+
+/* Chat (prawy panel) */
+.thread {
+  flex: 1 1 auto;
+  min-width: 340px; /* dostosowane by zmieścić się po zmniejszeniu lewego panelu */
+  max-width: calc(100% - 260px); /* zostaw miejsce po lewej (szer. conversations + gap) */
+  order: 2;
+  margin-left: auto;
+}
+.panel { background: var(--glass); padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.02); color:var(--text); }
+
+/* chat box */
+.chat-box {
+  max-height: 60vh;
+  overflow: auto;
+  padding-bottom: 8px;
+  margin-top: 8px;
+}
+.message { margin-bottom: 12px; clear: both; }
+.message .meta { font-size: 0.85rem; color: var(--muted); margin-bottom:4px; }
+.message .body { background: rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; display:inline-block; max-width:70%; color:var(--text); }
+.message.me .body { background: linear-gradient(90deg, rgba(110,231,183,0.06), rgba(96,165,250,0.06)); color:#05203a; float:right; }
+.message.other .body { float:left; }
+
+/* controls */
+.controls { margin-top:12px; }
+.reply-form textarea { background: transparent; border:1px solid rgba(255,255,255,0.04); color:var(--text); border-radius:8px; padding:8px; }
+
+/* assign button form */
+.assign-form { margin-bottom: 12px; }
+
+/* Responsiveness */
+@media (max-width: 1000px) {
+  .conversations { width: 100% !important; max-height: 220px; flex: 0 0 auto; }
+  .thread { order: 2; width: 100% !important; max-width: 100% !important; margin-left: 0; min-width: 0; }
+  .messages-wrap { flex-direction: column; }
+}
